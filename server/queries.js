@@ -15,7 +15,7 @@ const getData = async (sensor, id_arduino, interval='') => {
         console.log(`SELECT * FROM arduino${id_arduino}.${sensor}${interval}`);
         await pool.connect();
         const resposta = await pool.query(`SELECT * FROM arduino${id_arduino}.${sensor}${interval}`);
-        let data = resposta.rows;
+        let data = resposta.rows; 
         return data;
 
     } catch (error) {

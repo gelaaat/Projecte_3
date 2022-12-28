@@ -63,23 +63,10 @@ const mainHumitat2 = () => {
 const mainGaratge = async () => {
     let URL = `http://localhost:8000/portagaratge/3`;
     console.log('hola');
-    let estatPortaWeb = document.getElementById('estat-porta').innerText;
-    let loader = document.getElementsByClassName('loader');
-    let estatActual = await comprovarPorta(URL);
-    console.log(estatActual[0]);
-    
-
+    let divEstatGaratge = document.getElementById('estat-porta');
+    let estatActual = await getData(URL);
+    divEstatGaratge.innerText = estatActual[0].estat;
 };
-
-const comprovarPorta = async (URL) => {
-    let data;
-    await fetch(URL).then(success =>{
-        data = success.json();
-    }).catch(error => {
-        console.log(error);
-    });
-    return data;
-}
 
 const getData = async (URL) => {
     let data;
@@ -141,4 +128,6 @@ mainTemperatura1();
 mainTemperatura2();
 mainHumitat1();
 mainHumitat2();
-mainGaratge();
+setInterval(async () => {
+    await mainGaratge();
+}, 5000);
