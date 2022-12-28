@@ -19,17 +19,21 @@
                 <h2>Estació 1</h2>
                 <p>Aquesta estació està situada a la cara nord de la casa</p>
             </div>
+
             <article>
                 <div class="temperatura">
-                    <label for="temperatura">
-                        <select name="Temperatura" id="temperaturaSelection1" class="temperaturaSelection1">
-                            <option value="5min">5 min</option>
-                            <option value="30min">30 min</option>
-                            <option value="1h" selected="selected">1h</option>
-                            <option value="dia">Diari</option>
-                            <option value="mes">Mensual</option>
-                        </select>
-                    </label>
+                    <div class="title-chart">
+                        <h4>Temperatura</h4>
+                        <label for="temperatura">
+                            <select name="temperaturaSelection1" id="temperaturaSelection1" class="temperaturaSelection1">
+                                <option value="5min">5 min</option>
+                                <option value="30min">30 min</option>
+                                <option value="1h" selected="selected">1h</option>
+                                <option value="dia">Diari</option>
+                                <option value="mes">Mensual</option>
+                            </select>
+                        </label>
+                    </div>
                 
                     <div class="graficTemepratura">
                         <canvas id="canvasTemp1" width="100%" height="100%"></canvas>
@@ -37,15 +41,18 @@
                 </div>
 
                 <div class="humitat"></div>
-                    <label for="humitat">
-                        <select name="Humitat" id="humitatSelection1" class="humitatSelection1">
-                            <option value="5min">5 min</option>
-                            <option value="30min">30 min</option>
-                            <option value="1h" selected="selected">1h</option>
-                            <option value="dia">Diari</option>
-                            <option value="mes">Mensual</option>
-                        </select>
-                    </label>
+                    <div class="title-chart">
+                        <h4>Humitat Relativa</h4>
+                        <label for="humitat">
+                            <select name="Humitat" id="humitatSelection1" class="humitatSelection1">
+                                <option value="5min">5 min</option>
+                                <option value="30min">30 min</option>
+                                <option value="1h" selected="selected">1h</option>
+                                <option value="dia">Diari</option>
+                                <option value="mes">Mensual</option>
+                            </select>
+                        </label>
+                    </div>
                 
                     <div class="graficHumitat">
                         <canvas id="canvasHum1" width="100%" height="100%"></canvas>
@@ -58,26 +65,46 @@
             <div class="descripcio">
                 <h2>Estació 2</h2>
                 <p>Aquesta estació està situada a la cara sud de la casa</p>
-                <label for="temperatura2">
-                    <select name="Temperatura2" id="temperaturaSelection2" class="temperaturaSelection2">
-                        <option value="5min">5 min</option>
-                        <option value="30min">30 min</option>
-                        <option value="1h" selected="selected">1h</option>
-                        <option value="dia">Diari</option>
-                        <option value="mes">Mensual</option>
-                    </select>
-                </label>
             </div>
             <article>
                 <div class="temperatura">
+                    <div class="title-chart">
+                        <h4>Temperatura</h4>
+                        <label for="temperatura">
+                            <select name="temperaturaSelection2" id="temperaturaSelection2" class="temperaturaSelection2">
+                                <option value="5min">5 min</option>
+                                <option value="30min">30 min</option>
+                                <option value="1h" selected="selected">1h</option>
+                                <option value="dia">Diari</option>
+                                <option value="mes">Mensual</option>
+                            </select>
+                        </label>
+                    </div>
+                
                     <div class="graficTemepratura">
                         <canvas id="canvasTemp2" width="100%" height="100%"></canvas>
                     </div>
                 </div>
-                <div class="humitat">
-        
+
+                <div class="humitat"></div>
+                    <div class="title-chart">
+                        <h4>Humitat Relativa</h4>
+                        <label for="humitat">
+                            <select name="Humitat" id="humitatSelection2" class="humitatSelection2">
+                                <option value="5min">5 min</option>
+                                <option value="30min">30 min</option>
+                                <option value="1h" selected="selected">1h</option>
+                                <option value="dia">Diari</option>
+                                <option value="mes">Mensual</option>
+                            </select>
+                        </label>
+                    </div>
+                
+                    <div class="graficHumitat">
+                        <canvas id="canvasHum2" width="100%" height="100%"></canvas>
+                    </div>
                 </div>
-            </article>
+            </article> 
         </section>
 
         <section class="estacio">
@@ -85,10 +112,11 @@
                 <p>Porta garatge</p>
             </div>
             <article>
-
+                <span>LA PORTA ESTA:</span>
+                <span id="estat-porta"></span>
+                <span class="loader loading"></span>
             </article>
         </section>
-
     <main>
    
 </body>

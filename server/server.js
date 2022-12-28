@@ -35,13 +35,20 @@ app.get('/temperatura/:id_arduino/:interval', (req, res) => {
 
 app.get('/humitat/:id_arduino/:interval', (req, res) => {
     db.getData('humitat', req.params.id_arduino, req.params.interval).then((hum) =>{
-        console.log('he entrat');
         res.send(hum);
         
-    }).catch((err)=>{
+    }).catch(err =>{
         res.send(err);
     });
     
+});
+
+app.get('/portagaratge/:id_arduino', (req, res) => {
+    db.getData('portagaratge', req.params.id_arduino).then(data => {
+        res.send(data);
+    }).catch(error => {
+        res.send(error);
+    })
 });
 
 app.listen(PORT, () => {

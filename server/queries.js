@@ -1,6 +1,8 @@
 const { Pool } = require("pg");
 
-const getData = async (sensor, id_arduino, interval) => {
+
+
+const getData = async (sensor, id_arduino, interval='') => {
     try {
         const pool = new Pool({
             user: process.env.PGUSER,
@@ -9,6 +11,7 @@ const getData = async (sensor, id_arduino, interval) => {
             password: process.env.PGPASSWORD,
             port: process.env.PGPORT,
         });
+
         console.log(`SELECT * FROM arduino${id_arduino}.${sensor}${interval}`);
         await pool.connect();
         const resposta = await pool.query(`SELECT * FROM arduino${id_arduino}.${sensor}${interval}`);
@@ -19,5 +22,9 @@ const getData = async (sensor, id_arduino, interval) => {
         console.log(error);
     }
 };
+/*
+const portaGaratge = async () => {
 
+};  
+*/
 module.exports = { getData }
