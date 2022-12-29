@@ -24,7 +24,7 @@ app.use(
 app.use(express.static(PUBLIC_FOLDER));
 
 app.get('/temperatura/:id_arduino/:interval', (req, res) => {
-    db.getData('temperatura', req.params.id_arduino, req.params.interval).then((temp) =>{
+    db.getData('temperatura', req.params.id_arduino, req.params.interval, 'temps').then((temp) =>{
         res.send(temp);
         
     }).catch((err)=>{
@@ -34,7 +34,7 @@ app.get('/temperatura/:id_arduino/:interval', (req, res) => {
 });
 
 app.get('/humitat/:id_arduino/:interval', (req, res) => {
-    db.getData('humitat', req.params.id_arduino, req.params.interval).then((hum) =>{
+    db.getData('humitat', req.params.id_arduino, req.params.interval, 'temps').then((hum) =>{
         res.send(hum);
         
     }).catch(err =>{
@@ -44,7 +44,7 @@ app.get('/humitat/:id_arduino/:interval', (req, res) => {
 });
 
 app.get('/portagaratge/:id_arduino', (req, res) => {
-    db.getData('portagaratge', req.params.id_arduino).then(data => {
+    db.getData('portagaratge', req.params.id_arduino, '','estat').then(data => {
         res.send(data);
     }).catch(error => {
         res.send(error);
