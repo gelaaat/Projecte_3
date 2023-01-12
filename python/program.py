@@ -73,6 +73,7 @@ def crear_taules():
             curs.execute("INSERT INTO arduino2.temperatura1h(temps) VALUES ({temps}) ON CONFLICT(temps) DO NOTHING".format(temps=i))
             curs.execute("INSERT INTO arduino1.humitat1h(temps) VALUES ({temps}) ON CONFLICT(temps) DO NOTHING".format(temps=i))
             curs.execute("INSERT INTO arduino2.humitat1h(temps) VALUES ({temps}) ON CONFLICT(temps) DO NOTHING".format(temps=i))
+            curs.execute("INSERT INTO arduino2.pressio1h(temps) VALUES ({temps}) ON CONFLICT(temps) DO NOTHING".format(temps=i))
         
         #Fem per els 5min
         for i in range(0, 60, 5):
@@ -80,6 +81,7 @@ def crear_taules():
             curs.execute("INSERT INTO arduino2.temperatura5min(temps) VALUES ({temps}) ON CONFLICT(temps) DO NOTHING".format(temps=i))
             curs.execute("INSERT INTO arduino1.humitat5min(temps) VALUES ({temps}) ON CONFLICT(temps) DO NOTHING".format(temps=i))
             curs.execute("INSERT INTO arduino2.humitat5min(temps) VALUES ({temps}) ON CONFLICT(temps) DO NOTHING".format(temps=i))
+            curs.execute("INSERT INTO arduino2.pressio5min(temps) VALUES ({temps}) ON CONFLICT(temps) DO NOTHING".format(temps=i))
         
         #Fem pels dies del mes
         for i in range(1, 31, 1):
@@ -87,15 +89,16 @@ def crear_taules():
             curs.execute("INSERT INTO arduino2.temperaturadia(temps) VALUES ({temps}) ON CONFLICT(temps) DO NOTHING".format(temps=i))
             curs.execute("INSERT INTO arduino1.humitatdia(temps) VALUES ({temps}) ON CONFLICT(temps) DO NOTHING".format(temps=i))
             curs.execute("INSERT INTO arduino2.humitatdia(temps) VALUES ({temps}) ON CONFLICT(temps) DO NOTHING".format(temps=i))
+            curs.execute("INSERT INTO arduino2.pressiodia(temps) VALUES ({temps}) ON CONFLICT(temps) DO NOTHING".format(temps=i))
         
         #Fem els mesos
         
-        for i in range(1, 12, 1):
+        for i in range(1, 13, 1):
             curs.execute("INSERT INTO arduino1.temperaturames(temps) VALUES ('{temps}') ON CONFLICT(temps) DO NOTHING".format(temps=i))
             curs.execute("INSERT INTO arduino2.temperaturames(temps) VALUES ('{temps}') ON CONFLICT(temps) DO NOTHING".format(temps=i))
             curs.execute("INSERT INTO arduino1.humitatmes(temps) VALUES ('{temps}') ON CONFLICT(temps) DO NOTHING".format(temps=i))
             curs.execute("INSERT INTO arduino2.humitatmes(temps) VALUES ('{temps}') ON CONFLICT(temps) DO NOTHING".format(temps=i))
-            
+            curs.execute("INSERT INTO arduino2.pressiomes(temps) VALUES ('{temps}') ON CONFLICT(temps) DO NOTHING".format(temps=i))
     crear_Files()
 
     conexion.commit()
@@ -172,13 +175,14 @@ def borrar_taules():
     conexion.commit()
     conexion.close()
 
-recuperar_dades('arduino1', 'humitat', 'mes')
-
-borrar_taules()
-
 crear_taules()
 
+recuperar_dades('arduino1', 'humitat', 'mes')
+
+#borrar_taules()
 
 
 
-recuperar_dades('arduino1', 'temperatura', 'mes')
+
+
+
