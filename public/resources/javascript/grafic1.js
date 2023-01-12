@@ -2,6 +2,7 @@ const ctx1 = document.getElementById('canvasTemp1').getContext('2d');
 const ctx2 = document.getElementById('canvasTemp2').getContext('2d');
 const ctx3 = document.getElementById('canvasHum1').getContext('2d');
 const ctx4 = document.getElementById('canvasHum2').getContext('2d');
+const ctx5 = document.getElementById('canvasPress2').getContext('2d');
 
 const mainTemperatura1 = () => {
     let firstURL = `http://localhost:8000/temperatura/1/1h`;
@@ -57,6 +58,20 @@ const mainHumitat2 = () => {
         let URL = `http://localhost:8000/humitat/2/${interval || '1h'}`;
         updateChart('canvasHum2');
         render(URL, ctx4);
+    };
+};
+
+const mainPressio2 = () => {
+    let firstURL = `http://localhost:8000/pressio/2/1h`; 
+    render(firstURL, ctx5);
+    console.log('holaa');
+    const select5 = document.querySelector('.pressioSelection2');
+    
+    select5.onchange = (event) => { 
+        const interval = event.target.selectedOptions[0].value;
+        let URL = `http://localhost:8000/pressio/2/${interval || '1h'}`;
+        updateChart('canvasPress2');
+        render(URL, ctx5);
     };
 };
 
@@ -127,6 +142,7 @@ mainTemperatura1();
 mainTemperatura2();
 mainHumitat1();
 mainHumitat2();
+mainPressio2();
 setInterval(() => {
     mainGaratge();
 }, 5000);

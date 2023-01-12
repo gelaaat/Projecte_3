@@ -43,6 +43,16 @@ app.get('/humitat/:id_arduino/:interval', (req, res) => {
     
 });
 
+app.get('/pressio/:id_arduino/:interval', (req, res) => {
+    db.getData('pressio', req.params.id_arduino, req.params.interval, 'temps').then((press) =>{
+        res.send(press);
+        
+    }).catch(err =>{
+        res.send(err);
+    });
+    
+});
+
 app.get('/portagaratge/:id_arduino', (req, res) => {
     db.getData('portagaratge', req.params.id_arduino, '','estat').then(data => {
         res.send(data);

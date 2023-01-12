@@ -102,6 +102,27 @@ select{
     max-height: 15rem;
 }
 
+/*Pressio segona estacio*/
+
+.pressio{
+    width: 100%;
+    margin-top: 30px;
+}
+
+.graficPressio{
+    background-color: #5e638a;
+    width: 100%;
+    height: 100%;
+}
+
+#canvasPress2{
+    width: 100%;
+    height: auto;
+    max-height: 15rem;
+}
+
+
+
 /*Garatge*/
 
 .garatge span{
