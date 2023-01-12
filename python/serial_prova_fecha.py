@@ -40,6 +40,7 @@ DADES_DB = {
     'port': '5432'
 }
 
+
 #Funcions que executarem durant el programa de la base de dades
 def crear_taules():
     conexion = psycopg2.connect(host=DADES_DB['host'], dbname=DADES_DB['dbname'], user=DADES_DB['user'], password=DADES_DB['password'], port=DADES_DB['port'])
@@ -55,35 +56,35 @@ def crear_taules():
     curs.execute('''CREATE TABLE IF NOT EXISTS arduino1.temperatura1h (temps INT NOT NULL PRIMARY KEY, valor INT)''')
     curs.execute('''CREATE TABLE IF NOT EXISTS arduino1.temperatura5min (temps INT NOT NULL PRIMARY KEY, valor INT)''')
     curs.execute('''CREATE TABLE IF NOT EXISTS arduino1.temperaturadia (temps INT NOT NULL PRIMARY KEY, valor INT)''')
-    curs.execute('''CREATE TABLE IF NOT EXISTS arduino1.temperaturames (temps CHARACTER(3) NOT NULL PRIMARY KEY, valor INT)''')
+    curs.execute('''CREATE TABLE IF NOT EXISTS arduino1.temperaturames (temps INT NOT NULL PRIMARY KEY, valor INT)''')
 
     #HUMITAT de la primera estació
     curs.execute('''CREATE TABLE IF NOT EXISTS arduino1.humitat1min (temps INT NOT NULL PRIMARY KEY, valor INT)''')
     curs.execute('''CREATE TABLE IF NOT EXISTS arduino1.humitat1h (temps INT NOT NULL PRIMARY KEY, valor INT)''')
     curs.execute('''CREATE TABLE IF NOT EXISTS arduino1.humitat5min (temps INT NOT NULL PRIMARY KEY, valor INT)''')
     curs.execute('''CREATE TABLE IF NOT EXISTS arduino1.humitatdia (temps INT NOT NULL PRIMARY KEY, valor INT)''')
-    curs.execute('''CREATE TABLE IF NOT EXISTS arduino1.humitatmes (temps CHARACTER(3) NOT NULL PRIMARY KEY, valor INT)''')
+    curs.execute('''CREATE TABLE IF NOT EXISTS arduino1.humitatmes (temps INT NOT NULL PRIMARY KEY, valor INT)''')
 
     #TEMPERATURA segona estació
     curs.execute('''CREATE TABLE IF NOT EXISTS arduino2.temperatura1min (temps INT NOT NULL PRIMARY KEY, valor REAL)''')
     curs.execute('''CREATE TABLE IF NOT EXISTS arduino2.temperatura1h (temps INT NOT NULL PRIMARY KEY, valor REAL)''')
     curs.execute('''CREATE TABLE IF NOT EXISTS arduino2.temperatura5min (temps INT NOT NULL PRIMARY KEY, valor REAL)''')
     curs.execute('''CREATE TABLE IF NOT EXISTS arduino2.temperaturadia (temps INT NOT NULL PRIMARY KEY, valor REAL)''')
-    curs.execute('''CREATE TABLE IF NOT EXISTS arduino2.temperaturames (temps CHARACTER(3) NOT NULL PRIMARY KEY, valor REAL)''')
+    curs.execute('''CREATE TABLE IF NOT EXISTS arduino2.temperaturames (temps INT NOT NULL PRIMARY KEY, valor REAL)''')
 
     #HUMITAT de la segona estació
     curs.execute('''CREATE TABLE IF NOT EXISTS arduino2.humitat1min (temps INT NOT NULL PRIMARY KEY, valor REAL)''')
     curs.execute('''CREATE TABLE IF NOT EXISTS arduino2.humitat1h (temps INT NOT NULL PRIMARY KEY, valor REAL)''')
     curs.execute('''CREATE TABLE IF NOT EXISTS arduino2.humitat5min (temps INT NOT NULL PRIMARY KEY, valor REAL)''')
     curs.execute('''CREATE TABLE IF NOT EXISTS arduino2.humitatdia (temps INT NOT NULL PRIMARY KEY, valor REAL)''')
-    curs.execute('''CREATE TABLE IF NOT EXISTS arduino2.humitatmes (temps CHARACTER(3) NOT NULL PRIMARY KEY, valor REAL)''')
+    curs.execute('''CREATE TABLE IF NOT EXISTS arduino2.humitatmes (temps INT NOT NULL PRIMARY KEY, valor REAL)''')
 
     #Pressio de la segona estacio
     curs.execute('''CREATE TABLE IF NOT EXISTS arduino2.pressio1min (temps INT NOT NULL PRIMARY KEY, valor REAL)''')
     curs.execute('''CREATE TABLE IF NOT EXISTS arduino2.pressio1h (temps INT NOT NULL PRIMARY KEY, valor REAL)''')
     curs.execute('''CREATE TABLE IF NOT EXISTS arduino2.pressio5min (temps INT NOT NULL PRIMARY KEY, valor REAL)''')
     curs.execute('''CREATE TABLE IF NOT EXISTS arduino2.pressiodia (temps INT NOT NULL PRIMARY KEY, valor REAL)''')
-    curs.execute('''CREATE TABLE IF NOT EXISTS arduino2.pressiomes (temps CHARACTER(3) NOT NULL PRIMARY KEY, valor REAL)''')
+    curs.execute('''CREATE TABLE IF NOT EXISTS arduino2.pressiomes (temps INT NOT NULL PRIMARY KEY, valor REAL)''')
 
     #Garatge
     curs.execute('''CREATE TABLE IF NOT EXISTS arduino3.portagaratge (estat CHARACTER(7))''')
@@ -103,6 +104,7 @@ def crear_taules():
             curs.execute("INSERT INTO arduino2.temperatura1h(temps) VALUES ({temps}) ON CONFLICT(temps) DO NOTHING".format(temps=i))
             curs.execute("INSERT INTO arduino1.humitat1h(temps) VALUES ({temps}) ON CONFLICT(temps) DO NOTHING".format(temps=i))
             curs.execute("INSERT INTO arduino2.humitat1h(temps) VALUES ({temps}) ON CONFLICT(temps) DO NOTHING".format(temps=i))
+            curs.execute("INSERT INTO arduino2.pressio1h(temps) VALUES ({temps}) ON CONFLICT(temps) DO NOTHING".format(temps=i))
         
         #Fem per els 5min
         for i in range(0, 60, 5):
@@ -110,6 +112,7 @@ def crear_taules():
             curs.execute("INSERT INTO arduino2.temperatura5min(temps) VALUES ({temps}) ON CONFLICT(temps) DO NOTHING".format(temps=i))
             curs.execute("INSERT INTO arduino1.humitat5min(temps) VALUES ({temps}) ON CONFLICT(temps) DO NOTHING".format(temps=i))
             curs.execute("INSERT INTO arduino2.humitat5min(temps) VALUES ({temps}) ON CONFLICT(temps) DO NOTHING".format(temps=i))
+            curs.execute("INSERT INTO arduino2.pressio5min(temps) VALUES ({temps}) ON CONFLICT(temps) DO NOTHING".format(temps=i))
         
         #Fem pels dies del mes
         for i in range(1, 31, 1):
@@ -117,15 +120,16 @@ def crear_taules():
             curs.execute("INSERT INTO arduino2.temperaturadia(temps) VALUES ({temps}) ON CONFLICT(temps) DO NOTHING".format(temps=i))
             curs.execute("INSERT INTO arduino1.humitatdia(temps) VALUES ({temps}) ON CONFLICT(temps) DO NOTHING".format(temps=i))
             curs.execute("INSERT INTO arduino2.humitatdia(temps) VALUES ({temps}) ON CONFLICT(temps) DO NOTHING".format(temps=i))
+            curs.execute("INSERT INTO arduino2.pressiodia(temps) VALUES ({temps}) ON CONFLICT(temps) DO NOTHING".format(temps=i))
         
         #Fem els mesos
         
-        for i in range(1, 12, 1):
+        for i in range(1, 13, 1):
             curs.execute("INSERT INTO arduino1.temperaturames(temps) VALUES ('{temps}') ON CONFLICT(temps) DO NOTHING".format(temps=i))
             curs.execute("INSERT INTO arduino2.temperaturames(temps) VALUES ('{temps}') ON CONFLICT(temps) DO NOTHING".format(temps=i))
             curs.execute("INSERT INTO arduino1.humitatmes(temps) VALUES ('{temps}') ON CONFLICT(temps) DO NOTHING".format(temps=i))
             curs.execute("INSERT INTO arduino2.humitatmes(temps) VALUES ('{temps}') ON CONFLICT(temps) DO NOTHING".format(temps=i))
-            
+            curs.execute("INSERT INTO arduino2.pressiomes(temps) VALUES ('{temps}') ON CONFLICT(temps) DO NOTHING".format(temps=i))
     crear_Files()
 
     conexion.commit()
@@ -199,12 +203,11 @@ def borrar_taules():
     curs.execute('''DROP TABLE arduino2.humitatames CASCADE''')
     curs.execute('''DROP TABLE arduino2.pressiomes CASCADE''')
 
-borrar_taules()
+    conexion.commit()
+    conexion.close()
 
 #Creeem els Schemas i taules de la nostra base de dades
 crear_taules()
-
-recuperar_dades('arduino1', 'temperatura', 'mes')
 
 #Main loop del programa
 while 1:
