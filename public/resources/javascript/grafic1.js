@@ -5,14 +5,15 @@ const ctx4 = document.getElementById('canvasHum2').getContext('2d');
 const ctx5 = document.getElementById('canvasPress2').getContext('2d');
 
 const mainTemperatura1 = () => {
-    let firstURL = `http://localhost:8000/temperatura/1/1h`;
+    let firstURL = `http://localhost:8000/temperatura/1/1min`;
+    //updateChart('canvasTemp1');
     render(firstURL, ctx1);
 
     const select1 = document.querySelector('.temperaturaSelection1');
     
     select1.onchange = (event) => { 
         const interval = event.target.selectedOptions[0].value;
-        let URL = `http://localhost:8000/temperatura/1/${interval || '1h'}`;
+        let URL = `http://localhost:8000/temperatura/1/${interval || '1min'}`;
         updateChart('canvasTemp1');
         render(URL, ctx1);
     };
@@ -21,57 +22,60 @@ const mainTemperatura1 = () => {
 };
 
 const mainTemperatura2 = () => {
-    let firstURL = `http://localhost:8000/temperatura/2/1h`;
-    
+    let firstURL = `http://localhost:8000/temperatura/2/1min`;
+    //updateChart('canvasTemp2');
     render(firstURL, ctx2);
 
     const select2 = document.querySelector('.temperaturaSelection2');
     
     select2.onchange = (event) => { 
         const interval = event.target.selectedOptions[0].value;
-        let URL = `http://localhost:8000/temperatura/2/${interval || '1h'}`;
+        let URL = `http://localhost:8000/temperatura/2/${interval || '1min'}`;
         updateChart('canvasTemp2');
         render(URL, ctx2);
     };
 }
 
 const mainHumitat1 = () => {
-    let firstURL = `http://localhost:8000/humitat/1/1h`; 
+    let firstURL = `http://localhost:8000/humitat/1/1min`;
+    //updateChart('canvasHum1'); 
     render(firstURL, ctx3);
     const select3 = document.querySelector('.humitatSelection1');
     
     select3.onchange = (event) => { 
         const interval = event.target.selectedOptions[0].value;
-        let URL = `http://localhost:8000/humitat/1/${interval || '1h'}`;
+        let URL = `http://localhost:8000/humitat/1/${interval || '1min'}`;
         updateChart('canvasHum1');
         render(URL, ctx3);
     };
 };
 
 const mainHumitat2 = () => {
-    let firstURL = `http://localhost:8000/humitat/2/1h`; 
+    let firstURL = `http://localhost:8000/humitat/2/1min`; 
+    //updateChart('canvasHum2');
     render(firstURL, ctx4);
     const select4 = document.querySelector('.humitatSelection2');
     
     select4.onchange = (event) => { 
         const interval = event.target.selectedOptions[0].value;
-        let URL = `http://localhost:8000/humitat/2/${interval || '1h'}`;
+        let URL = `http://localhost:8000/humitat/2/${interval || '1min'}`;
         updateChart('canvasHum2');
         render(URL, ctx4);
     };
 };
 
 const mainPressio2 = () => {
-    let firstURL = `http://localhost:8000/pressio/2/1h`; 
-    render(firstURL, ctx5);
+    let firstURL = `http://localhost:8000/pressio/2/1min`;
+    //updateChart('canvasPress2'); 
+    render(firstURL, ctx5, 950);
     console.log('holaa');
     const select5 = document.querySelector('.pressioSelection2');
     
     select5.onchange = (event) => { 
         const interval = event.target.selectedOptions[0].value;
-        let URL = `http://localhost:8000/pressio/2/${interval || '1h'}`;
+        let URL = `http://localhost:8000/pressio/2/${interval || '1min'}`;
         updateChart('canvasPress2');
-        render(URL, ctx5);
+        render(URL, ctx5, 950);
     };
 };
 
@@ -93,7 +97,7 @@ const getData = async (URL) => {
     return data;
 };
 
-const render = async (URL, ctx) => {
+const render = async (URL, ctx, valor_min = 0) => {
     
     const data = await getData(URL);
 
@@ -123,12 +127,13 @@ const render = async (URL, ctx) => {
             plugins:{
                 legend: {display: false}
             },
-            responsive: true,
+            
+            /*responsive: true,
             scales:{
                 y:{
-                    min: 0
+                    min: valor_min
                 }
-            }
+            }*/
         }
     })
 }
@@ -138,11 +143,22 @@ const updateChart = (chartId) => {
     chart.destroy();
 };
 
+
+/*
+setInterval(() => {
+    mainTemperatura1();
+    mainTemperatura2();
+    mainHumitat1();
+    mainHumitat2();
+    mainPressio2();
+}, 5000);
+*/
 mainTemperatura1();
 mainTemperatura2();
 mainHumitat1();
 mainHumitat2();
 mainPressio2();
+
 setInterval(() => {
     mainGaratge();
 }, 5000);
