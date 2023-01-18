@@ -280,11 +280,12 @@ while 1:
             ack=sock.recv(1204)
             
             while(ack ==" "):
+                sock.send('1')
                 ack=sock.recv(1204)
                 
-            time.sleep(0.12)
+            time.sleep(0.22)
             data=sock.recv(1204)
-            time.sleep(0.1)
+            time.sleep(0.2)
             datat=sock.recv(1204)
             temp1=""
             humitat1=""
@@ -299,6 +300,8 @@ while 1:
 
             if int(temp1)<=3 or int(temp1)>99:
                 print('eeiii ho he cambiat')
+                print(temp1)
+                print(humitat1)
                 temp1=temp1_ant
                 humitat1=humitat1_ant
 
@@ -338,15 +341,22 @@ while 1:
             for valor in datatt:
                 press=press+chr(valor)
             
+            if (temp2.count('.')>1 or humitat2.count('.')>1 or press.count('.')>1 or float(humitat2)>100 or float(press)<500 or float(press)>1500):
+                temp2=temp2_anterior
+                humitat2=humitat2_anterior
+                press=press_anterior
+            
             print(str(temp2))
             print(str(humitat2))
             print(str(press))
 
-            
             insertar_dada('arduino2', 'temperatura', '1min', 'temps', 'valor', Kai, float(temp2))
             insertar_dada('arduino2', 'humitat', '1min', 'temps', 'valor', Kai , float(humitat2))
             insertar_dada('arduino2', 'pressio', '1min', 'temps', 'valor', Kai , float(press))
-        
+            temp2_anterior=temp2
+            humitat2_anterior=humitat2
+            press_anterior=press
+            
         except:
             sock.close()
     
