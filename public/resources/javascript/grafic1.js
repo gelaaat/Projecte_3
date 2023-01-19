@@ -3,35 +3,38 @@ const ctx2 = document.getElementById('canvasTemp2').getContext('2d');
 const ctx3 = document.getElementById('canvasHum1').getContext('2d');
 const ctx4 = document.getElementById('canvasHum2').getContext('2d');
 const ctx5 = document.getElementById('canvasPress2').getContext('2d');
+
 const IP='192.168.0.27'
 
 
 const mainTemperatura1 = () => {
-    let firstURL = `http://${IP}:8000/temperatura/1/1min`;
-    //updateChart('canvasTemp1');
+    const select1 = document.querySelector('.temperaturaSelection1');
+    let interval = select1.selectedOptions[0].value;
+    
+    let firstURL = `http://${IP}:8000/temperatura/1/${interval}`;
     render(firstURL, ctx1);
 
-    const select1 = document.querySelector('.temperaturaSelection1');
-    
     select1.onchange = (event) => { 
-        const interval = event.target.selectedOptions[0].value;
+        interval = event.target.selectedOptions[0].value;
         let URL = `http://${IP}:8000/temperatura/1/${interval || '1min'}`;
         updateChart('canvasTemp1');
         render(URL, ctx1);
     };
 
     
+
+    
 };
 
 const mainTemperatura2 = () => {
-    let firstURL = `http://${IP}:8000/temperatura/2/1min`;
-    //updateChart('canvasTemp2');
-    render(firstURL, ctx2);
-
     const select2 = document.querySelector('.temperaturaSelection2');
+    let interval = select2.selectedOptions[0].value;
+    
+    let firstURL = `http://${IP}:8000/temperatura/2/${interval}`;
+    render(firstURL, ctx2);
     
     select2.onchange = (event) => { 
-        const interval = event.target.selectedOptions[0].value;
+        interval = event.target.selectedOptions[0].value;
         let URL = `http://${IP}:8000/temperatura/2/${interval || '1min'}`;
         updateChart('canvasTemp2');
         render(URL, ctx2);
@@ -39,13 +42,15 @@ const mainTemperatura2 = () => {
 }
 
 const mainHumitat1 = () => {
-    let firstURL = `http://${IP}:8000/humitat/1/1min`;
-    //updateChart('canvasHum1'); 
-    render(firstURL, ctx3);
     const select3 = document.querySelector('.humitatSelection1');
+    let interval = select3.selectedOptions[0].value;
+
+    let firstURL = `http://${IP}:8000/humitat/1/${interval}`;
+    render(firstURL, ctx3);
+    
     
     select3.onchange = (event) => { 
-        const interval = event.target.selectedOptions[0].value;
+        interval = event.target.selectedOptions[0].value;
         let URL = `http://${IP}:8000/humitat/1/${interval || '1min'}`;
         updateChart('canvasHum1');
         render(URL, ctx3);
@@ -53,13 +58,15 @@ const mainHumitat1 = () => {
 };
 
 const mainHumitat2 = () => {
-    let firstURL = `http://${IP}:8000/humitat/2/1min`; 
-    //updateChart('canvasHum2');
-    render(firstURL, ctx4);
     const select4 = document.querySelector('.humitatSelection2');
+    let interval = select4.selectedOptions[0].value;
+
+    let firstURL = `http://${IP}:8000/humitat/2/${interval}`; 
+    render(firstURL, ctx4);
+    
     
     select4.onchange = (event) => { 
-        const interval = event.target.selectedOptions[0].value;
+        interval = event.target.selectedOptions[0].value;
         let URL = `http://${IP}:8000/humitat/2/${interval || '1min'}`;
         updateChart('canvasHum2');
         render(URL, ctx4);
@@ -67,13 +74,15 @@ const mainHumitat2 = () => {
 };
 
 const mainPressio2 = () => {
-    let firstURL = `http://${IP}:8000/pressio/2/1min`;
-    //updateChart('canvasPress2'); 
-    render(firstURL, ctx5, 950);
     const select5 = document.querySelector('.pressioSelection2');
+    let interval = select5.selectedOptions[0].value;
+
+    let firstURL = `http://${IP}:8000/pressio/2/${interval}`;
+    render(firstURL, ctx5, 950);
+    
     
     select5.onchange = (event) => { 
-        const interval = event.target.selectedOptions[0].value;
+        interval = event.target.selectedOptions[0].value;
         let URL = `http://${IP}:8000/pressio/2/${interval || '1min'}`;
         updateChart('canvasPress2');
         render(URL, ctx5, 950);
@@ -129,12 +138,8 @@ const render = async (URL, ctx, valor_min = 0) => {
                 legend: {display: false}
             },
             
-            /*responsive: true,
-            scales:{
-                y:{
-                    min: valor_min
-                }
-            }*/
+            responsive: true,
+            
         }
     })
 }
@@ -143,17 +148,6 @@ const updateChart = (chartId) => {
     const chart = Chart.getChart(chartId);
     chart.destroy();
 };
-
-
-/*
-setInterval(() => {
-    mainTemperatura1();
-    mainTemperatura2();
-    mainHumitat1();
-    mainHumitat2();
-    mainPressio2();
-}, 5000);
-*/
 
 
 setInterval(() => {
@@ -177,5 +171,4 @@ setInterval(() => {
     mainHumitat2();
     updateChart('canvasPress2');
     mainPressio2();
-    console.log('he refrescat')
 }, 60000);

@@ -5,16 +5,16 @@
     font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
-html, main, body{
+html, body{
     width: 100%;
     font-family: 'Montserrat', sans-serif;
 }
 
 body{
     background-color: #464b73;
-    padding: 4rem;
-    
 }
+ 
+
 
 h1, h2, h3, h4, h5, h6, p{
     color: white;
@@ -127,4 +127,19 @@ select{
 
 .garatge span{
     color:white;
+}
+
+@media only screen and (max-width:600px){
+    main{
+        padding: 1rem
+    }
+    
+}
+
+
+@media only screen and (min-width:600px){
+    main{
+        padding: 4rem
+    }
+    
 }

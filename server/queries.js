@@ -26,12 +26,11 @@ const getData = async (sensor, id_arduino, interval='', columna_id) => {
     
     try {
         await client.connect();
-        console.log(`SELECT * FROM arduino${id_arduino}.${sensor}${interval}`);
         const resposta = await pool.query(`SELECT * FROM arduino${id_arduino}.${sensor}${interval} ORDER BY ${columna_id} ASC`);
         let data = resposta.rows;
 
-        client.end().then(mes=>{
-            console.log('sha desconnectat')
+        client.end().catch(err => {
+            console.error('No sha pogut desconnectar el client ', err)
         });
 
         return data;

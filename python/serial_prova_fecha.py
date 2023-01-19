@@ -19,7 +19,7 @@ datatt=""
 data2=""
 count=0
 portaAnterior = ""
-
+una_mitjana=0
 
 #Prova amb dates
 CURRENT_TIME_ANTERIOR = time.strftime("%H %M", time.localtime())
@@ -179,7 +179,6 @@ def canviar_dades():
     conexion.commit()
     conexion.close()
 
-
 def borrar_taules():
     conexion = psycopg2.connect(host=DADES_DB['host'], dbname=DADES_DB['dbname'], user=DADES_DB['user'], password=DADES_DB['password'], port=DADES_DB['port'])
     curs = conexion.cursor()
@@ -202,6 +201,48 @@ def borrar_files_minuts():
     curs.execute('''DELETE FROM arduino2.temperatura1min WHERE temps=0''')
     curs.execute('''DELETE FROM arduino2.humitat1min WHERE temps=0''')
     curs.execute('''DELETE FROM arduino2.pressio1min WHERE temps=0''')
+
+    conexion.commit()
+    conexion.close()
+
+def actualitzar_grafic(interval):
+    conexion = psycopg2.connect(host=DADES_DB['host'], dbname=DADES_DB['dbname'], user=DADES_DB['user'], password=DADES_DB['password'], port=DADES_DB['port'])
+    curs = conexion.cursor()
+
+    if (interval == '1min'):
+        curs.execute('''UPDATE arduino1.temperatura1min SET valor = NULL''')
+        curs.execute('''UPDATE arduino1.humitat1min SET valor = NULL''')
+        curs.execute('''UPDATE arduino2.temperatura1min SET valor = NULL''')
+        curs.execute('''UPDATE arduino2.humitat1min SET valor = NULL''')
+        curs.execute('''UPDATE arduino2.pressio1min SET valor = NULL''')
+
+    if(interval == '5min'):
+        curs.execute('''UPDATE arduino1.temperatura5min SET valor = NULL''')
+        curs.execute('''UPDATE arduino1.humitat5min SET valor = NULL''')
+        curs.execute('''UPDATE arduino2.temperatura5min SET valor = NULL''')
+        curs.execute('''UPDATE arduino2.humitat5min SET valor = NULL''')
+        curs.execute('''UPDATE arduino2.pressio5min SET valor = NULL''')
+
+    if(interval == '1h'):
+        curs.execute('''UPDATE arduino1.temperatura1h SET valor = NULL''')
+        curs.execute('''UPDATE arduino1.humitat1h SET valor = NULL''')
+        curs.execute('''UPDATE arduino2.temperatura1h SET valor = NULL''')
+        curs.execute('''UPDATE arduino2.humitat1h SET valor = NULL''')
+        curs.execute('''UPDATE arduino2.pressio1h SET valor = NULL''')
+    
+    if(interval == 'dia'):
+        curs.execute('''UPDATE arduino1.temperaturadia SET valor = NULL''')
+        curs.execute('''UPDATE arduino1.humitatdia SET valor = NULL''')
+        curs.execute('''UPDATE arduino2.temperaturadia SET valor = NULL''')
+        curs.execute('''UPDATE arduino2.humitatdia SET valor = NULL''')
+        curs.execute('''UPDATE arduino2.pressiodia SET valor = NULL''')
+
+    if(interval == 'mes'):
+        curs.execute('''UPDATE arduino1.temperaturames SET valor = NULL''')
+        curs.execute('''UPDATE arduino1.humitatmes SET valor = NULL''')
+        curs.execute('''UPDATE arduino2.temperaturames SET valor = NULL''')
+        curs.execute('''UPDATE arduino2.humitatmes SET valor = NULL''')
+        curs.execute('''UPDATE arduino2.pressiomes SET valor = NULL''')
 
     conexion.commit()
     conexion.close()
@@ -232,7 +273,7 @@ while 1:
     first_time=0
     
 
-    while( CURRENT_TIME[4] == CURRENT_TIME_ANTERIOR[4] and (CURRENT_TIME[4] != '0' and CURRENT_TIME[4] != 5) ):
+    while( CURRENT_TIME[4] == CURRENT_TIME_ANTERIOR[4]  ):
         CURRENT_TIME_ANTERIOR = time.strftime("%H %M", time.localtime())
         
         if first_time==0:
@@ -263,221 +304,18 @@ while 1:
             garatge(text_porta)
             portaAnterior = porta
         
-
-
-    '''
-        *********MAIN PROGRAMA**************
-    '''
-    if ( CURRENT_TIME[4] != CURRENT_TIME_ANTERIOR[4] ):
-
-        CURRENT_TIME_ANTERIOR = time.strftime("%H %M", time.localtime())
-
-        try:
-
-            sock=bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-            sock.connect((arduino2,port))
-            sock.send('1')
-            ack=sock.recv(1204)
-            
-            while(ack ==" "):
-                sock.send('1')
-                ack=sock.recv(1204)
-                
-            time.sleep(0.22)
-            data=sock.recv(1204)
-            time.sleep(0.2)
-            datat=sock.recv(1204)
-            temp1=""
-            humitat1=""
-            press=""
-            sock.close()
-
-            for valor in data:
-                temp1=temp1+chr(valor)
-
-            for valor in datat:
-                humitat1=humitat1+chr(valor)
-
-            if int(temp1)<=3 or int(temp1)>99:
-                print('eeiii ho he cambiat')
-                print(temp1)
-                print(humitat1)
-                temp1=temp1_ant
-                humitat1=humitat1_ant
-
-            humitat1_ant=humitat1
-            temp1_ant=temp1
-            
-            print(str(temp1))
-            print(str(humitat1))
-            
-            insertar_dada('arduino1', 'temperatura', '1min', 'temps', 'valor', Kai, int(temp1))
-            insertar_dada('arduino1', 'humitat', '1min', 'temps', 'valor',Kai, int(humitat1))
-
-            sock=bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-            sock.connect((arduino1,port))
-            sock.send('1')
-            ack=sock.recv(1204)
-            while(ack ==" "):
-                ack=sock.recv(1204)
-                
-            time.sleep(0.12)
-            data=sock.recv(1204)
-            time.sleep(0.1)
-            datat=sock.recv(1204)
-            time.sleep(0.12)
-            datatt=sock.recv(1204)
-            sock.close()
-            temp2=""
-            humitat2=""
-            press=""
-            
-            for valor in data:
-                temp2=temp2+chr(valor)
-
-            for valor in datat:
-                humitat2=humitat2+chr(valor)
-            
-            for valor in datatt:
-                press=press+chr(valor)
-            
-            if (temp2.count('.')>1 or humitat2.count('.')>1 or press.count('.')>1 or float(humitat2)>100 or float(press)<500 or float(press)>1500):
-                temp2=temp2_anterior
-                humitat2=humitat2_anterior
-                press=press_anterior
-            
-            print(str(temp2))
-            print(str(humitat2))
-            print(str(press))
-
-            insertar_dada('arduino2', 'temperatura', '1min', 'temps', 'valor', Kai, float(temp2))
-            insertar_dada('arduino2', 'humitat', '1min', 'temps', 'valor', Kai , float(humitat2))
-            insertar_dada('arduino2', 'pressio', '1min', 'temps', 'valor', Kai , float(press))
-            temp2_anterior=temp2
-            humitat2_anterior=humitat2
-            press_anterior=press
-            
-        except:
-            sock.close()
-    
-    CURRENT_TIME = time.strftime("%H %M", time.localtime()) 
-
-
     #Tot seguit farem la lògica per omplir els gràfics
-
-    #Aquest if es per fer les mitjanes per omplir el grafic dels 5min
-    if(CURRENT_TIME[4] == '5' or CURRENT_TIME[4] == '0'):
-
-        #Fem primera la primera arduino
-        #Temperatura
-        dades_temperatura_1min = recuperar_dades('arduino1', 'temperatura', '1min')
-
-        sumatori = 0
-        longitud = 0
-
-        for dada in dades_temperatura_1min:
-
-            if(dada[1] == None):
-                continue
-            else:
-                sumatori = sumatori + dada[1]
-                longitud = longitud + 1
-
-        resultat = 0
-        resultat = sumatori/longitud
-
-        insertar_dada('arduino1', 'temperatura', '5min', 'temps', 'valor', CURRENT_TIME[3:], resultat)
-
-        #Humitat
-        dades_humitat_1min = recuperar_dades('arduino1', 'humitat', '1min')
-        
-        sumatori = 0
-        longitud = 0
-
-        for dada in dades_humitat_1min:
-            
-            if(dada[1] == None):
-                continue
-            else:
-                sumatori = sumatori + dada[1]
-                longitud = longitud + 1
-
-        resultat = 0
-        resultat = sumatori/longitud
-
-        insertar_dada('arduino1', 'humitat', '5min', 'temps', 'valor', CURRENT_TIME[3:], resultat)
-
-
-        #Fem la segona estacio
-        #Temperatura
-        dades_temperatura_1min = recuperar_dades('arduino2', 'temperatura', '1min')
-        
-        sumatori = 0
-        longitud = 0
-
-        for dada in dades_temperatura_1min:
-            
-            if(dada[1] == None):
-                continue
-            else:
-                sumatori = sumatori + dada[1]
-                longitud = longitud + 1
-
-        resultat = 0
-        resultat = sumatori/longitud
-
-        insertar_dada('arduino2', 'temperatura', '5min', 'temps', 'valor', CURRENT_TIME[3:], resultat)
-
-        #Humitat
-        dades_humitat_1min = recuperar_dades('arduino2', 'humitat', '1min')
-        
-        sumatori = 0
-        longitud = 0
-
-        for dada in dades_humitat_1min:
-            
-            if(dada[1] == None):
-                continue
-            else:
-                sumatori = sumatori + dada[1]
-                longitud = longitud + 1
-
-        resultat = 0
-        resultat = sumatori/longitud
-
-        insertar_dada('arduino2', 'humitat', '5min', 'temps', 'valor', CURRENT_TIME[3:], resultat)
-
-        #Pressio
-        dades_pressio_1min = recuperar_dades('arduino2', 'pressio', '1min')
-        
-        sumatori = 0
-        longitud = 0
-
-        for dada in dades_pressio_1min:
-            
-            if(dada[1] == None):
-                continue
-            else:
-                sumatori = sumatori + dada[1]
-                longitud = longitud + 1
-
-        resultat = 0
-        resultat = sumatori/longitud
-
-        insertar_dada('arduino2', 'pressio', '5min', 'temps', 'valor', CURRENT_TIME[3:], resultat)
-
-    #Aquest if es per fer les mitjanes per omplir el grafic de les hores
-    if(CURRENT_TIME[3] == "0" and CURRENT_TIME[4] == "0"):
-        #Aqui farem les mitjanes per posar-ho al grafic de les hores
+    #Aquest if es per fer mitjanes per omplir el grafic dels messos
+    if(mes != mes_anterior):
 
         #Fem primera la primera arduino
         #Temperatura
-        dades_temperatura_5min = recuperar_dades('arduino1', 'temperatura', '5min')
+        dades_temperatura_dia = recuperar_dades('arduino1', 'temperatura', 'dia')
         
         sumatori = 0
         longitud = 0
 
-        for dada in dades_temperatura_5min:
+        for dada in dades_temperatura_dia:
             
             if(dada[1] == None):
                 continue
@@ -488,15 +326,15 @@ while 1:
         resultat = 0
         resultat = sumatori/longitud
 
-        insertar_dada('arduino1', 'temperatura', '1h', 'temps', 'valor', CURRENT_TIME[:2], resultat)
+        insertar_dada('arduino1', 'temperatura', 'dia', 'temps', 'valor', mes_anterior, resultat)
 
         #Humitat
-        dades_humitat_5min = recuperar_dades('arduino1', 'humitat', '5min')
+        dades_humitat_dia = recuperar_dades('arduino1', 'humitat', 'dia')
         
         sumatori = 0
         longitud = 0
 
-        for dada in dades_humitat_5min:
+        for dada in dades_humitat_dia:
             
             if(dada[1] == None):
                 continue
@@ -507,18 +345,18 @@ while 1:
         resultat = 0
         resultat = sumatori/longitud
 
-        insertar_dada('arduino1', 'humitat', '1h', 'temps', 'valor', CURRENT_TIME[:2], resultat)
+        insertar_dada('arduino1', 'humitat', 'dia', 'temps', 'valor', mes_anterior, resultat)
 
 
 
         #Fem ara per la segona estacio
         #Temperatura
-        dades_temperatura_5min = recuperar_dades('arduino2', 'temperatura', '5min')
+        dades_temperatura_dia = recuperar_dades('arduino2', 'temperatura', 'dia')
         
         sumatori = 0
         longitud = 0
 
-        for dada in dades_temperatura_5min:
+        for dada in dades_temperatura_dia:
             
             if(dada[1] == None):
                 continue
@@ -529,16 +367,16 @@ while 1:
         resultat = 0
         resultat = sumatori/longitud
 
-        insertar_dada('arduino2', 'temperatura', '1h', 'temps', 'valor', CURRENT_TIME[:2], resultat)
+        insertar_dada('arduino2', 'temperatura', 'dia', 'temps', 'valor', mes_anterior, resultat)
         
 
         #Humitat
-        dades_humitat_5min = recuperar_dades('arduino2', 'humitat', '5min')
+        dades_humitat_dia = recuperar_dades('arduino2', 'humitat', 'dia')
         
         sumatori = 0
         longitud = 0
 
-        for dada in dades_humitat_5min:
+        for dada in dades_humitat_dia:
             
             if(dada[1] == None):
                 continue
@@ -549,16 +387,16 @@ while 1:
         resultat = 0
         resultat = sumatori/longitud
 
-        insertar_dada('arduino2', 'humitat', '1h', 'temps', 'valor', CURRENT_TIME[:2], resultat)
+        insertar_dada('arduino2', 'humitat', 'dia', 'temps', 'valor', mes_anterior, resultat)
 
 
         #Pressio
-        dades_pressio_5min = recuperar_dades('arduino2', 'pressio', '5min')
+        dades_pressio_dia = recuperar_dades('arduino2', 'pressio', 'dia')
         
-        ssumatori = 0
+        sumatori = 0
         longitud = 0
 
-        for dada in dades_pressio_5min:
+        for dada in dades_pressio_dia:
             
             if(dada[1] == None):
                 continue
@@ -569,7 +407,9 @@ while 1:
         resultat = 0
         resultat = sumatori/longitud
 
-        insertar_dada('arduino2', 'pressio', '1h', 'temps', 'valor', CURRENT_TIME[:2], resultat)
+        insertar_dada('arduino2', 'pressio', 'dia', 'temps', 'valor', mes_anterior, resultat)
+        mes_anterior = str(date.today())[5:7]
+        actualitzar_grafic('dia')
 
     #Aquest if es per fer mitjanes per omplir el grafic dels dies
     if(today != today_anterior):
@@ -675,18 +515,20 @@ while 1:
 
         insertar_dada('arduino2', 'pressio', 'dia', 'temps', 'valor', today_anterior, resultat)
         today_anterior = str(date.today())[8:]
+        actualitzar_grafic('1h')
 
-    #Aquest if es per fer mitjanes per omplir el grafic dels messos
-    if(mes != mes_anterior):
+    #Aquest if es per fer les mitjanes per omplir el grafic de les hores
+    if((CURRENT_TIME[3] == "0" and CURRENT_TIME[4] == "0") and una_mitjana == 1):
+        #Aqui farem les mitjanes per posar-ho al grafic de les hores
 
         #Fem primera la primera arduino
         #Temperatura
-        dades_temperatura_dia = recuperar_dades('arduino1', 'temperatura', 'dia')
+        dades_temperatura_5min = recuperar_dades('arduino1', 'temperatura', '5min')
         
         sumatori = 0
         longitud = 0
 
-        for dada in dades_temperatura_dia:
+        for dada in dades_temperatura_5min:
             
             if(dada[1] == None):
                 continue
@@ -697,15 +539,15 @@ while 1:
         resultat = 0
         resultat = sumatori/longitud
 
-        insertar_dada('arduino1', 'temperatura', 'dia', 'temps', 'valor', mes_anterior, resultat)
+        insertar_dada('arduino1', 'temperatura', '1h', 'temps', 'valor', CURRENT_TIME[:2], resultat)
 
         #Humitat
-        dades_humitat_dia = recuperar_dades('arduino1', 'humitat', 'dia')
+        dades_humitat_5min = recuperar_dades('arduino1', 'humitat', '5min')
         
         sumatori = 0
         longitud = 0
 
-        for dada in dades_humitat_dia:
+        for dada in dades_humitat_5min:
             
             if(dada[1] == None):
                 continue
@@ -716,18 +558,17 @@ while 1:
         resultat = 0
         resultat = sumatori/longitud
 
-        insertar_dada('arduino1', 'humitat', 'dia', 'temps', 'valor', mes_anterior, resultat)
-
+        insertar_dada('arduino1', 'humitat', '1h', 'temps', 'valor', CURRENT_TIME[:2], resultat)
 
 
         #Fem ara per la segona estacio
         #Temperatura
-        dades_temperatura_dia = recuperar_dades('arduino2', 'temperatura', 'dia')
+        dades_temperatura_5min = recuperar_dades('arduino2', 'temperatura', '5min')
         
         sumatori = 0
         longitud = 0
 
-        for dada in dades_temperatura_dia:
+        for dada in dades_temperatura_5min:
             
             if(dada[1] == None):
                 continue
@@ -738,16 +579,16 @@ while 1:
         resultat = 0
         resultat = sumatori/longitud
 
-        insertar_dada('arduino2', 'temperatura', 'dia', 'temps', 'valor', mes_anterior, resultat)
+        insertar_dada('arduino2', 'temperatura', '1h', 'temps', 'valor', CURRENT_TIME[:2], resultat)
         
 
         #Humitat
-        dades_humitat_dia = recuperar_dades('arduino2', 'humitat', 'dia')
+        dades_humitat_5min = recuperar_dades('arduino2', 'humitat', '5min')
         
         sumatori = 0
         longitud = 0
 
-        for dada in dades_humitat_dia:
+        for dada in dades_humitat_5min:
             
             if(dada[1] == None):
                 continue
@@ -758,16 +599,16 @@ while 1:
         resultat = 0
         resultat = sumatori/longitud
 
-        insertar_dada('arduino2', 'humitat', 'dia', 'temps', 'valor', mes_anterior, resultat)
+        insertar_dada('arduino2', 'humitat', '1h', 'temps', 'valor', CURRENT_TIME[:2], resultat)
 
 
         #Pressio
-        dades_pressio_dia = recuperar_dades('arduino2', 'pressio', 'dia')
+        dades_pressio_5min = recuperar_dades('arduino2', 'pressio', '5min')
         
-        sumatori = 0
+        ssumatori = 0
         longitud = 0
 
-        for dada in dades_pressio_dia:
+        for dada in dades_pressio_5min:
             
             if(dada[1] == None):
                 continue
@@ -778,5 +619,221 @@ while 1:
         resultat = 0
         resultat = sumatori/longitud
 
-        insertar_dada('arduino2', 'pressio', 'dia', 'temps', 'valor', mes_anterior, resultat)
-        mes_anterior = str(date.today())[5:7]
+        insertar_dada('arduino2', 'pressio', '1h', 'temps', 'valor', CURRENT_TIME[:2], resultat)
+        actualitzar_grafic('5min')
+
+    #Aquest if es per fer les mitjanes per omplir el grafic dels 5min
+    if((CURRENT_TIME[4] == '5' or CURRENT_TIME[4] == '0') and una_mitjana == 1):
+        una_mitjana=0
+        #Fem primera la primera arduino
+        #Temperatura
+        dades_temperatura_1min = recuperar_dades('arduino1', 'temperatura', '1min')
+        
+        sumatori = 0
+        longitud = 0
+
+        for dada in dades_temperatura_1min:
+
+            if(dada[1] == None):
+                continue
+            else:
+                sumatori = sumatori + dada[1]
+                longitud = longitud + 1
+
+        resultat = 0
+        resultat = sumatori/longitud
+        
+        print('ho inserto a la taula arduino1.temp5min a linterval de', CURRENT_TIME[3:])
+
+        insertar_dada('arduino1', 'temperatura', '5min', 'temps', 'valor', CURRENT_TIME[3:], resultat)
+
+        #Humitat
+        dades_humitat_1min = recuperar_dades('arduino1', 'humitat', '1min')
+        
+        sumatori = 0
+        longitud = 0
+
+        for dada in dades_humitat_1min:
+            
+            if(dada[1] == None):
+                continue
+            else:
+                sumatori = sumatori + dada[1]
+                longitud = longitud + 1
+
+        resultat = 0
+        resultat = sumatori/longitud
+
+        insertar_dada('arduino1', 'humitat', '5min', 'temps', 'valor', CURRENT_TIME[3:], resultat)
+
+
+        #Fem la segona estacio
+        #Temperatura
+        dades_temperatura_1min = recuperar_dades('arduino2', 'temperatura', '1min')
+        
+        sumatori = 0
+        longitud = 0
+
+        for dada in dades_temperatura_1min:
+            
+            if(dada[1] == None):
+                continue
+            else:
+                sumatori = sumatori + dada[1]
+                longitud = longitud + 1
+
+        resultat = 0
+        resultat = sumatori/longitud
+
+        insertar_dada('arduino2', 'temperatura', '5min', 'temps', 'valor', CURRENT_TIME[3:], resultat)
+
+        #Humitat
+        dades_humitat_1min = recuperar_dades('arduino2', 'humitat', '1min')
+        
+        sumatori = 0
+        longitud = 0
+
+        for dada in dades_humitat_1min:
+            
+            if(dada[1] == None):
+                continue
+            else:
+                sumatori = sumatori + dada[1]
+                longitud = longitud + 1
+
+        resultat = 0
+        resultat = sumatori/longitud
+
+        insertar_dada('arduino2', 'humitat', '5min', 'temps', 'valor', CURRENT_TIME[3:], resultat)
+
+        #Pressio
+        dades_pressio_1min = recuperar_dades('arduino2', 'pressio', '1min')
+        
+        sumatori = 0
+        longitud = 0
+
+        for dada in dades_pressio_1min:
+            
+            if(dada[1] == None):
+                continue
+            else:
+                sumatori = sumatori + dada[1]
+                longitud = longitud + 1
+
+        resultat = 0
+        resultat = sumatori/longitud
+
+        insertar_dada('arduino2', 'pressio', '5min', 'temps', 'valor', CURRENT_TIME[3:], resultat)
+        print('borro dades')
+        actualitzar_grafic('1min')
+
+
+
+    '''
+        *********MAIN PROGRAMA**************
+    '''
+    if ( CURRENT_TIME[4] != CURRENT_TIME_ANTERIOR[4] ):
+        una_mitjana = 1
+        temps_init=time.perf_counter()
+        CURRENT_TIME_ANTERIOR = time.strftime("%H %M", time.localtime())
+
+        try:
+            while(time.perf_counter()-temps_init<120):
+                sock=bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+                sock.connect((arduino2,port))
+                sock.send('1')
+                ack=sock.recv(1204)
+            
+                while(ack ==" "):
+                    sock.send('1')
+                    ack=sock.recv(1204)
+                
+                time.sleep(0.22)
+                data=sock.recv(1204)
+                time.sleep(0.2)
+                datat=sock.recv(1204)
+                temp1=""
+                humitat1=""
+                press=""
+                sock.close()
+
+                for valor in data:
+                    temp1=temp1+chr(valor)
+
+                for valor in datat:
+                    humitat1=humitat1+chr(valor)
+
+                if int(temp1)<=3 or int(temp1)>99:
+                    print('eeiii ho he cambiat')
+                    print(temp1)
+                    print(humitat1)
+                    temp1=temp1_ant
+                    humitat1=humitat1_ant
+
+                humitat1_ant=humitat1
+                temp1_ant=temp1
+            
+                print(str(temp1))
+                print(str(humitat1))
+            
+                insertar_dada('arduino1', 'temperatura', '1min', 'temps', 'valor', Kai, int(temp1))
+                insertar_dada('arduino1', 'humitat', '1min', 'temps', 'valor',Kai, int(humitat1))
+
+                sock=bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+                sock.connect((arduino1,port))
+                sock.send('1')
+                ack=sock.recv(1204)
+                while(ack ==" "):
+                    ack=sock.recv(1204)
+                
+                time.sleep(0.12)
+                data=sock.recv(1204)
+                time.sleep(0.1)
+                datat=sock.recv(1204)
+                time.sleep(0.12)
+                datatt=sock.recv(1204)
+                sock.close()
+                temp2=""
+                humitat2=""
+                press=""
+            
+                for valor in data:
+                    temp2=temp2+chr(valor)
+
+                for valor in datat:
+                    humitat2=humitat2+chr(valor)
+            
+                for valor in datatt:
+                    press=press+chr(valor)
+            
+                if (temp2.count('.')>1 or humitat2.count('.')>1 or press.count('.')>1 or float(humitat2)>100 or float(press)<500 or float(press)>1500):
+                    temp2=temp2_anterior
+                    humitat2=humitat2_anterior
+                    press=press_anterior
+            
+                print(str(temp2))
+                print(str(humitat2))
+                print(str(press))
+
+                insertar_dada('arduino2', 'temperatura', '1min', 'temps', 'valor', Kai, float(temp2))
+                insertar_dada('arduino2', 'humitat', '1min', 'temps', 'valor', Kai , float(humitat2))
+                insertar_dada('arduino2', 'pressio', '1min', 'temps', 'valor', Kai , float(press))
+                temp2_anterior=temp2
+                humitat2_anterior=humitat2
+                press_anterior=press
+                break
+
+        except:
+            print('he entrat a except')
+            print(str(temp1_ant))
+            print(str(humitat1_ant))
+            print(str(temp2_anterior))
+            print(str(humitat2_anterior))
+            print(str(press_anterior))           
+            insertar_dada('arduino1', 'temperatura', '1min', 'temps', 'valor', Kai, int(temp1_ant))
+            insertar_dada('arduino1', 'humitat', '1min', 'temps', 'valor',Kai, int(humitat1_ant))
+            insertar_dada('arduino2', 'temperatura', '1min', 'temps', 'valor', Kai, float(temp2_anterior))
+            insertar_dada('arduino2', 'humitat', '1min', 'temps', 'valor', Kai , float(humitat2_anterior))
+            insertar_dada('arduino2', 'pressio', '1min', 'temps', 'valor', Kai , float(press_anterior))
+            sock.close()
+        
