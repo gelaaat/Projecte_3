@@ -738,7 +738,7 @@ while 1:
         CURRENT_TIME_ANTERIOR = time.strftime("%H %M", time.localtime())
 
         try:
-            while(time.perf_counter()-temps_init<120):
+            while(time.perf_counter()-temps_init<40):
                 sock=bluetooth.BluetoothSocket(bluetooth.RFCOMM)
                 sock.connect((arduino2,port))
                 sock.send('1')
