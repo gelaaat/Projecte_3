@@ -4,7 +4,7 @@ const ctx3 = document.getElementById('canvasHum1').getContext('2d');
 const ctx4 = document.getElementById('canvasHum2').getContext('2d');
 const ctx5 = document.getElementById('canvasPress2').getContext('2d');
 
-const IP='192.168.0.27'
+const IP='localhost' //Si es vol visualitzar des d'un altre dispostiu, has de posar la IP de la raspberry exemple: 192.168.0.27
 
 
 const mainTemperatura1 = () => {
